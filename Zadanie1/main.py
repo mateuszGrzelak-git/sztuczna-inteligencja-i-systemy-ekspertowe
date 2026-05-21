@@ -36,5 +36,25 @@ def dfs ():
 def aStar():
     print()
 
+def main():
+    print("Wybierz algorytm do wyszukiwania: ")
+    print("1) wyszukiwanie wszerz")
+    print("2) wyszukiwanie w głąb")
+    print("3) wyszukiwanie A*")
+    wybranyAlgorytm = int(input("Wybrany algorytm: "))
+    glebokoscAlgorytmu = int(input("Podaj głębokość algorytmu, by określić z jaką precyzją ma wyszukiwać algorytm: "))
+
+    if wybranyAlgorytm == 1:
+        bfs()
+    elif wybranyAlgorytm == 2:
+        dfs()
+    elif wybranyAlgorytm == 3:
+        aStar()
+    else:
+        print("Wpisano niepoprawny numer algorytmu")
+        main()
+
+
 if __name__ == '__main__':
     print_hi('PyCharm')
+    main()

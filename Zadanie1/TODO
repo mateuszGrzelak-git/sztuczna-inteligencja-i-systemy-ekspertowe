@@ -1,4 +1,9 @@
 /*# Notatki nowaka
+
+G - goal - stan docelowy 
+s - start - stan początkowy
+
+
 """
 function bfs (G, s)
 if G.isGoal (s) - w tym jest dużo niepotrzebnych operacji
