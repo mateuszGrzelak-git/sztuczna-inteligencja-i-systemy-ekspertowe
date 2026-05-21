@@ -1,0 +1,303 @@
+/*# Notatki nowaka
+"""
+function bfs (G, s)
+if G.isGoal (s) - w tym jest dużo niepotrzebnych operacji
+    return success
+Q = queue()
+T = set()
+Q.enqueue(s)
+
+while ~ Q is empty()
+    v = Q.dequeue
+        if b.is_goal(v)
+    T.add(v)
+    for n in b neighbors(v)
+        if ~ T.has(n) and ~Q has(n)
+        Q.enqueue(n)
+"""
+
+
+
+#Program ma wykorzystywać pliki a nie z danych wpisywanych do programu
+
+def bfs(graph, start):
+if graph.is_goal(start):
+return 0
+queue = []
+visited = set()
+queue.append(start)
+while queue:
+v = queue.pop(0)
+if graph.is_goal(v):
+return 0
+visited.add(v)
+for n in graph.neighbors(v):
+if not visited.has(n) and not queue.has(n):
+queue.append(n)
+return 1
+
+
+
+głębokość = 20
+
+
+"""
+wszerz = bfs
+w głąb = dfs
+A*     = astr
+"""
+wejscie = input("Wpisz algorytm: ")
+dodatkowy = input("Wpisz dodatkowy parametr: ")
+#stan początkowy
+"""
+7   2   4
+5   -   6
+8   3   1
+"""
+#stan docelowy
+"""
+-   1   2
+3   4   5
+6   7   8
+"""
+#Cele algorytmu: Znaleźć najbardziej optymalne podejście
+"""Wykorzystać strategie:
+- wszerz
+- w głąb
+- najpierw najlepszy === A*:
+a) metryka Hamminga
+b) metryka Manhattan
+"""
+
+"""
+Zdefiniować przesunięcia
+Przesunięcie        Litera
+w lewo              L
+w prawo             R
+w górę              U
+w dół               D
+"""
+
+
+#Raport
+"""
+    długość znalezionego rozwiązania;
+    liczbę stanów odwiedzonych;
+    liczbę stanów przetworzonych;
+    maksymalną osiągniętą głębokość rekursji;
+    czas trwania procesu obliczeniowego.
+
+"""
+*/
+
+
+
+
+
+/*
+
+Zajecia 8.04
+
+heurystyki muszą być dopuszczalne -  czyli nie przesacowywać
+
+
+
+//na poczatku G ma 0
+//mozliwe ze funkcja niespojna wyglada inaczej
+//Nowak mowi ze dobrze dziala zwlaszcza ze nasze heurystyki sa spojne
+//heurystyka niespojna jest gdzies na wiki
+funkcja A*(s, G)
+{
+    P = priority_queue()
+    T = set()
+    P.insert(s, 0) //tu moze byc dowolna liczba, nie musimy tutaj obliczyc tej heurystyki i zaoszczedzamy czas
+
+    while ~P.isempty()
+        v = p.pull()
+        if G.isEqual(v):
+            return success
+
+        T.add(v)
+        for n in G.neighbors():
+            if ~T.has(n)
+                f = g(n) + h(n,G)
+//sprawdzanie czy w stanow otwartych
+                if ~P.has(n)
+                    P.insert(n, f)
+//jesli wynik jest lepszy dajemy mu wiekszy priorytet
+                else
+                    if P.priority(n) > f
+                        P.update(n, f)
+    return FAILURE
+}
+
+
+
+//2 wersja kiedy nie chcemy updatowac
+
+funkcja A*_bez_update(G, s)
+{
+    P = priority_queue()
+    T = set()
+    P.insert(s, 0)
+    while ~P.isempty()
+        v = P.pull()
+        if G.isgoal(v)
+            return success
+        if ~T.has(v)
+            T.add(v)
+            for n in G.neighbors()
+                if ~T.has(n)
+                    f = g(n) + h(n,G)
+                    P.insert(n,f)
+    return FAILURE
+}
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+fn main() {
+    // W naszym programie H oznacza heurystyczne
+    //używamy strategi:
+    // - wszerz
+    //     - w głąb
+    //     - najpierw najlepszy === A*:
+    // a) metryka Hamminga: https://brainly.pl/zadanie/9223198
+    // b) metryka Manhattan/miejska: https://brain.fuw.edu.pl/edu/index.php/Matematyka_1_OO/Niestandardowe_metryki
+    println!("Hello, world!");
+
+
+
+
+
+    /*Założenia mojego podejścia
+
+    *) pobranie informacji od uzytkownika
+    1) otwarcie pliku wejsciowego
+    2) przechowanie informacji w tablicach zgodnie z graficzną prezentacją macierzy: https://obliczone.pl/images/macierze/wyznaczniki/pytania/wyznacznik-macierzy-4x4.gif
+        - tab[x][y]
+        - x oznacza rzad
+        - y oznacza kolumne
+        - oczywiscie stosujemy sie do zasad programowania czyli
+        - liczba na 1 miejscu to tab[0]
+
+    3.1) definiujemy enum ruchow
+    3.2) inicjujemy tablice ruchow dla ponizszych opcji:
+
+    1@ przechodzimy do wyszukiwania wszerz
+        to Nowak za nas zrobil dodajemy tylko enum i tablice
+    2@ przechodzimy do wyszukiwania w glab
+        dziala na tej samej zasadzie co wszerz
+    3@ przechodzimy do wyszukiwania A* w poleceniu astr
+        podajemy dopuszczalnosc do funkcji
+
+
+    Bonus: Mile widziane wyszukiwanie grafowe
+     */
+}
+
+/*
+    Strategie wyszukiwania niedoinformowanego
+*/
+
+
+/*
+function bfs (G, s)
+if G.isGoal (s) - w tym jest dużo niepotrzebnych operacji
+return success
+Q = queue()
+T = set()
+Q.enqueue(s)
+
+while ~ Q is empty()
+v = Q.dequeue
+if b.is_goal(v)
+T.add(v)
+for n in b neighbors(v)
+if ~ T.has(n) and ~Q has(n)
+Q.enqueue(n)
+*/
+
+enum przesunieciaWLiczbach {
+    L,
+    R,
+    U,
+    D,
+}
+
+//Przegladajac rozwiazania z poprzednich lat funkcja bedzie
+//dzialac nastepujaco
+/*
+ * 1) sprawdza czy nie przekroczono zadanej glebokosci
+ * 2) odnosi sie do funkcji boolean czyRozwiazano
+ * 3) sprawdza gdzie moze sie przesunac
+ * 4) zwraca ilosc ruchow jak i miejsce
+   pustego pola na ktorym skonczylismy poszukiwanie
+ */
+fn wyszukiwanieWszerz() {
+
+}
+
+//Dziala na takiej samej zasadzie co wyszukiwanieWGlab
+fn wyszukiwanieWGlab() {
+
+}
+
+fn iteracyjneZaglebienie() {
+
+}
+
+fn wyszukiwanieDwukierunkowe() {
+
+}
+
+
+fn algorytmDijkstry() { /*https://wiedzmin.fandom.com/wiki/Sigismund_Dijkstra*/
+
+}
+
+
+/*
+    END
+ */
+
+
+/*
+    Strategie wyszukiwania doinformowanego
+ */
+
+//W wersji zachlannej
+fn AGwiazdaWZach() {
+
+}
+
+fn AGwiazdka() {
+    //rozwiazanie = koszt_sciezki +
+    //  + szacowany_koszt_najkrotszej_sciezki
+}
+
+fn dwukierunkoweWyszukiwanieH() {
+
+}
+
+fn heurystykiNiedopuszczalne() {
+
+}
+
+fn wazoneAGwiazdka() {
+
+}
+
+/*
+    END
+ */
