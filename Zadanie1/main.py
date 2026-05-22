@@ -2,8 +2,45 @@ from collections import deque
 import matplotlib as plt
 import csv
 
+"""
+Błędy:
+- Graph.isGoal()
+- Q.not_empty()
+- G.neighbors
+"""
+
 #True == success
 #False == failure
+
+countOfRows = 0
+countOfColumns = 0
+
+indexForRows = 0
+indexForColumns = 1
+startPos = 0
+
+stepsForGoal = 0
+stepsDirections = ""
+
+def readFile(path):
+    list = []
+    file = open(path, 'r')
+    lineIndex = 0
+    for x in file.readlines():
+        #pierwsze użycie strip usuwa entery
+        #drugie użycie split usuwa spacje
+        x = x.strip()
+        x = x.split()
+        if lineIndex == 0:
+            countOfRows = int(x[indexForRows])
+            countOfColumns = int(x[indexForColumns])
+        else:
+            list.append(x)
+        lineIndex += 1
+    
+    file.close()
+    return list
+
 
 def print_hi(name):
     print(f'Hi, {name}')
@@ -36,6 +73,12 @@ def dfs ():
 def aStar():
     print()
 
+def printResult():
+    filename = "result.txt"
+    file = open(filename, "w")
+    file.writelines(stepsForGoal)
+    file.writelines(stepsDirections)
+
 def main():
     print("Wybierz algorytm do wyszukiwania: ")
     print("1) wyszukiwanie wszerz")
@@ -43,15 +86,18 @@ def main():
     print("3) wyszukiwanie A*")
     wybranyAlgorytm = int(input("Wybrany algorytm: "))
     glebokoscAlgorytmu = int(input("Podaj głębokość algorytmu, by określić z jaką precyzją ma wyszukiwać algorytm: "))
+    nazwaPliku = input("Podaj nazwę pliku w którym zapisano zadanie: ")
+
+    zadanie = readFile(nazwaPliku)
 
     if wybranyAlgorytm == 1:
-        bfs()
+        bfs(zadanie, startPos)
     elif wybranyAlgorytm == 2:
-        dfs()
+        dfs(zadanie, startPos)
     elif wybranyAlgorytm == 3:
-        aStar()
+        aStar(zadanie, startPos)
     else:
-        print("Wpisano niepoprawny numer algorytmu")
+        print("Wpisano niepoprawny numer algorytmu, proszę spróbować ponownie")
         main()
 
 
