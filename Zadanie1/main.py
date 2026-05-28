@@ -1,6 +1,7 @@
 from collections import deque
 import matplotlib as plt
 import csv
+from math import floor
 
 """
 Błędy:
@@ -41,6 +42,55 @@ def readFile(path):
     file.close()
     return list
 
+def getIndexForColumnAndRow(column, row):
+    result = 0
+    result = countOfColumns * row + column
+    return result
+
+def getColumnAndRowFromIndex(index):
+    rowAndColumn = []
+    row = floor(index/countOfColumns)
+    column = index%countOfColumns
+    rowAndColumn.append(row)
+    rowAndColumn.append(column)
+    return rowAndColumn
+
+def neighbors(puzzleList, visitedStates):
+    puzzle = tuple(puzzleList)
+    neighbors = []
+    index = 0
+    for x in puzzleList:
+        if x == 0:
+            rowAndColumn = getColumnAndRowFromIndex(index)
+            row = rowAndColumn[0]
+            column = rowAndColumn[1]
+            upBlock = getIndexForColumnAndRow(column, row-1)
+            rightBlock = getIndexForColumnAndRow(column+1, row)
+            leftBlock = getIndexForColumnAndRow(column-1, row)
+            downBlock = getIndexForColumnAndRow(column, row+1)
+            if row-1 >= 0:
+                neighbors.append(puzzleList[upBlock])
+            if column-1 >= 0:
+                neighbors.append(puzzleList[leftBlock])
+            if column+1 <= countOfColumns-1:
+                neighbors.append(puzzleList[rightBlock])
+            if row+1 <= countOfRows-1:
+                neighbors.append(puzzleList[downBlock])
+        index += 1
+
+def isGoal(graph):
+    index = 0
+    for x in range(countOfColumns):
+        for y in range(countOfRows):
+            if graph[index] != index:
+                return False
+            index += 1
+    return True
+
+def notEmpty(deque):
+    if deque:
+        return True
+    return False
 
 def print_hi(name):
     print(f'Hi, {name}')
