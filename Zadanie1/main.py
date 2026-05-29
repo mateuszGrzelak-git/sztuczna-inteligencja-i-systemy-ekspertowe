@@ -9,6 +9,11 @@ Błędy:
 - Q.not_empty()
 - G.neighbors
 """
+"""
+Sąsiadem nie są liczby obok 0
+tylko cała plansza według teorii algorytmów
+"""
+
 
 #True == success
 #False == failure
@@ -23,6 +28,12 @@ startPos = 0
 stepsForGoal = 0
 stepsDirections = ""
 
+def listOfStringsToListOfInt(list):
+    result = []
+    for x in list:
+        result.append(int(x))
+    return result
+
 def readFile(path):
     list = []
     file = open(path, 'r')
@@ -36,6 +47,7 @@ def readFile(path):
             countOfRows = int(x[indexForRows])
             countOfColumns = int(x[indexForColumns])
         else:
+            x = listOfStringsToInt(x)
             list.append(x)
         lineIndex += 1
     
@@ -77,6 +89,39 @@ def neighbors(puzzleList, visitedStates):
             if row+1 <= countOfRows-1:
                 neighbors.append(puzzleList[downBlock])
         index += 1
+
+def neighborsAsState(puzzleList, visitedStates, direction):
+    puzzle = tuple(puzzleList)
+    neighbors = []
+    puzzleResult = list(puzzle)
+    index = 0
+    for x in puzzleList:
+        if x == 0:
+            rowAndColumn = getColumnAndRowFromIndex(index)
+            row = rowAndColumn[0]
+            column = rowAndColumn[1]
+            upBlock = getIndexForColumnAndRow(column, row-1)
+            rightBlock = getIndexForColumnAndRow(column+1, row)
+            leftBlock = getIndexForColumnAndRow(column-1, row)
+            downBlock = getIndexForColumnAndRow(column, row+1)
+            if direction == 'U':
+                tmp = puzzleResult[index]
+                puzzleResult[index] = puzzleResult[upBlock]
+                puzzleResult[upBlock] = tmp
+            if direction == 'L':
+                tmp = puzzleResult[index]
+                puzzleResult[index] = puzzleResult[leftBlock]
+                puzzleResult[leftBlock] = tmp
+            if direction == 'R':
+                tmp = puzzleResult[index]
+                puzzleResult[index] = puzzleResult[rightBlock]
+                puzzleResult[rightBlock] = tmp
+            if direction == 'D':
+                tmp = puzzleResult[index]
+                puzzleResult[index] = puzzleResult[downBlock]
+                puzzleResult[downBlock] = tmp
+        index += 1
+    return tuple(puzzleResult)
 
 def isGoal(graph):
     index = 0
