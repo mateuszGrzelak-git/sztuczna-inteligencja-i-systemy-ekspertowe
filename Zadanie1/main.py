@@ -15,9 +15,8 @@ Sąsiadem nie są liczby obok 0
 tylko cała plansza według teorii algorytmów
 """
 
-
-#True == success
-#False == failure
+# True == success
+# False == failure
 
 countOfRows = 0
 countOfColumns = 0
@@ -36,7 +35,7 @@ def listOfStringsToListOfInt(list):
         result.append(int(x))
     return result
 
-#TODO: jeśli można użyć numpy użyj tego
+# TODO: jeśli można użyć numpy użyj tego
 def twoDimensionalListToOne(list):
     return np.concatenate(list)
 
@@ -53,18 +52,20 @@ def readFile(path):
     file = open(path, 'r')
     lineIndex = 0
     for x in file.readlines():
-        #pierwsze użycie strip usuwa entery
-        #drugie użycie split usuwa spacje
+        # pierwsze użycie strip usuwa entery
+        # drugie użycie split usuwa spacje
         x = x.strip()
         x = x.split()
         if lineIndex == 0:
+            global countOfRows
+            global countOfColumns
             countOfRows = int(x[indexForRows])
             countOfColumns = int(x[indexForColumns])
         else:
             x = listOfStringsToListOfInt(x)
             list.append(x)
         lineIndex += 1
-    
+
     file.close()
 
     list = twoDimensionalListToOne(list)
@@ -77,8 +78,8 @@ def getIndexForColumnAndRow(column, row):
 
 def getColumnAndRowFromIndex(index):
     rowAndColumn = []
-    row = floor(index/countOfColumns)
-    column = index%countOfColumns
+    row = floor(index / countOfColumns)
+    column = index % countOfColumns
     rowAndColumn.append(row)
     rowAndColumn.append(column)
     return rowAndColumn
@@ -92,17 +93,17 @@ def neighbors(puzzleList, visitedStates):
             rowAndColumn = getColumnAndRowFromIndex(index)
             row = rowAndColumn[0]
             column = rowAndColumn[1]
-            upBlock = getIndexForColumnAndRow(column, row-1)
-            rightBlock = getIndexForColumnAndRow(column+1, row)
-            leftBlock = getIndexForColumnAndRow(column-1, row)
-            downBlock = getIndexForColumnAndRow(column, row+1)
-            if row-1 >= 0:
+            upBlock = getIndexForColumnAndRow(column, row - 1)
+            rightBlock = getIndexForColumnAndRow(column + 1, row)
+            leftBlock = getIndexForColumnAndRow(column - 1, row)
+            downBlock = getIndexForColumnAndRow(column, row + 1)
+            if row - 1 >= 0:
                 neighbors.append(puzzleList[upBlock])
-            if column-1 >= 0:
+            if column - 1 >= 0:
                 neighbors.append(puzzleList[leftBlock])
-            if column+1 <= countOfColumns-1:
+            if column + 1 <= countOfColumns - 1:
                 neighbors.append(puzzleList[rightBlock])
-            if row+1 <= countOfRows-1:
+            if row + 1 <= countOfRows - 1:
                 neighbors.append(puzzleList[downBlock])
         index += 1
 
@@ -116,10 +117,10 @@ def neighborsAsState(puzzleList, visitedStates, direction):
             rowAndColumn = getColumnAndRowFromIndex(index)
             row = rowAndColumn[0]
             column = rowAndColumn[1]
-            upBlock = getIndexForColumnAndRow(column, row-1)
-            rightBlock = getIndexForColumnAndRow(column+1, row)
-            leftBlock = getIndexForColumnAndRow(column-1, row)
-            downBlock = getIndexForColumnAndRow(column, row+1)
+            upBlock = getIndexForColumnAndRow(column, row - 1)
+            rightBlock = getIndexForColumnAndRow(column + 1, row)
+            leftBlock = getIndexForColumnAndRow(column - 1, row)
+            downBlock = getIndexForColumnAndRow(column, row + 1)
             if direction == 'U':
                 tmp = puzzleResult[index]
                 puzzleResult[index] = puzzleResult[upBlock]
@@ -156,13 +157,13 @@ def notEmpty(deque):
 def print_hi(name):
     print(f'Hi, {name}')
 
-#szukanie wszerz
-def bfs (Graph, start):
+# szukanie wszerz
+def bfs(Graph, start):
     if Graph.isGoal():
         return True
     Q = deque()
     T = set()
-    #enqueue = append (TYLKO W TYM ALGORYTMIE!!!)
+    # enqueue = append (TYLKO W TYM ALGORYTMIE!!!)
     Q.append(start)
 
     while Q.not_empty:
@@ -177,28 +178,29 @@ def bfs (Graph, start):
                 Q.append(n)
     return False
 
-def bfs (start):
+def bfs(start):
     if isGoal(start):
-        return True
-    
-    #currentStates saves state in queue not a numbers
+        return start
+
+    # currentStates saves state in queue not a numbers
     currentStates = deque()
     visitedStates = []
     currentStates.append(start)
 
     while notEmpty(currentStates):
         v = currentStates.popleft()
-        #wcześniej v nie było sprawdź czy rozumiesz
+        # wcześniej v nie było sprawdź czy rozumiesz
         if isGoal(v):
-            return True
+            return v
         visitedStates.append(v)
         for x in directions:
             potentialNeighbor = neighborsAsState(v, visitedStates, x)
+            # czy to nie jest 2 razy?
             if potentialNeighbor != 0 and potentialNeighbor not in visitedStates and potentialNeighbor not in currentStates:
                 currentStates.append(potentialNeighbor)
 
-#szukanie w głąb
-def dfs ():
+# szukanie w głąb
+def dfs():
     print()
 
 def aStar():
@@ -207,7 +209,7 @@ def aStar():
 def printResult():
     filename = "result.txt"
     file = open(filename, "w")
-    file.writelines(stepsForGoal)
+    file.writelines(str(stepsForGoal))
     file.writelines(stepsDirections)
 
 def main():
@@ -222,7 +224,8 @@ def main():
     zadanie = readFile(nazwaPliku)
 
     if wybranyAlgorytm == 1:
-        bfs(zadanie, startPos)
+        result = bfs(zadanie)
+        printResult()
     elif wybranyAlgorytm == 2:
         dfs(zadanie, startPos)
     elif wybranyAlgorytm == 3:
@@ -230,7 +233,6 @@ def main():
     else:
         print("Wpisano niepoprawny numer algorytmu, proszę spróbować ponownie")
         main()
-
 
 if __name__ == '__main__':
     print_hi('PyCharm')
