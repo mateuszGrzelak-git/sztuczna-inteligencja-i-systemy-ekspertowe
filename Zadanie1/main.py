@@ -1,6 +1,7 @@
 from collections import deque
 import matplotlib as plt
 import csv
+import numpy as np
 from math import floor
 
 """
@@ -27,11 +28,24 @@ startPos = 0
 
 stepsForGoal = 0
 stepsDirections = ""
+directions = "LRUD"
 
 def listOfStringsToListOfInt(list):
     result = []
     for x in list:
         result.append(int(x))
+    return result
+
+#TODO: jeśli można użyć numpy użyj tego
+def twoDimensionalListToOne(list):
+    return np.concatenate(list)
+
+def twoDimensionalListToOne(list):
+    result = []
+    for x in list:
+        for y in x:
+            result.append(y)
+
     return result
 
 def readFile(path):
@@ -47,11 +61,13 @@ def readFile(path):
             countOfRows = int(x[indexForRows])
             countOfColumns = int(x[indexForColumns])
         else:
-            x = listOfStringsToInt(x)
+            x = listOfStringsToListOfInt(x)
             list.append(x)
         lineIndex += 1
     
     file.close()
+
+    list = twoDimensionalListToOne(list)
     return list
 
 def getIndexForColumnAndRow(column, row):
@@ -160,6 +176,26 @@ def bfs (Graph, start):
             if n not in T and n not in Q:
                 Q.append(n)
     return False
+
+def bfs (start):
+    if isGoal(start):
+        return True
+    
+    #currentStates saves state in queue not a numbers
+    currentStates = deque()
+    visitedStates = []
+    currentStates.append(start)
+
+    while notEmpty(currentStates):
+        v = currentStates.popleft()
+        #wcześniej v nie było sprawdź czy rozumiesz
+        if isGoal(v):
+            return True
+        visitedStates.append(v)
+        for x in directions:
+            potentialNeighbor = neighborsAsState(v, visitedStates, x)
+            if potentialNeighbor != 0 and potentialNeighbor not in visitedStates and potentialNeighbor not in currentStates:
+                currentStates.append(potentialNeighbor)
 
 #szukanie w głąb
 def dfs ():
