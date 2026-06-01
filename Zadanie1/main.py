@@ -178,6 +178,7 @@ def bfs(Graph, start):
                 Q.append(n)
     return False
 
+#TODO: implement limit of depth
 def bfs(start):
     if isGoal(start):
         return start
@@ -185,19 +186,23 @@ def bfs(start):
     # currentStates saves state in queue not a numbers
     currentStates = deque()
     visitedStates = []
-    currentStates.append(start)
+    global stepsDirections
+    global stepsForGoal
+    currentStates.append((start, stepsDirections))
 
     while notEmpty(currentStates):
-        v = currentStates.popleft()
+        v, stepDirection = currentStates.popleft()
         # wcześniej v nie było sprawdź czy rozumiesz
         if isGoal(v):
+            stepsDirections = stepDirection
+            stepsForGoal = len(stepDirection)
             return v
         visitedStates.append(v)
         for x in directions:
             potentialNeighbor = neighborsAsState(v, visitedStates, x)
             # czy to nie jest 2 razy?
             if potentialNeighbor != 0 and potentialNeighbor not in visitedStates and potentialNeighbor not in currentStates:
-                currentStates.append(potentialNeighbor)
+                currentStates.append((potentialNeighbor, stepDirection + x))
 
 # szukanie w głąb
 def dfs():
