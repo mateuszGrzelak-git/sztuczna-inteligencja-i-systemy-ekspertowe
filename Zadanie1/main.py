@@ -3,6 +3,8 @@ import matplotlib as plt
 import csv
 import numpy as np
 from math import floor
+from pathlib import Path
+import os
 
 """
 Błędy:
@@ -71,6 +73,23 @@ def readFile(path):
     list = twoDimensionalListToOne(list)
     return list
 
+def executeProgramForDirectory(directoryPath, glebokoscAlgorytmu, wybranyAlgorytm):
+    path = Path(os.getcwd()) / directoryPath
+    list = []
+    for filename in path.glob("*.txt"):
+        zadanie = readFile(filename)
+
+        if wybranyAlgorytm == 1:
+            result = bfs(zadanie)
+            printResult()
+        elif wybranyAlgorytm == 2:
+            dfs(zadanie)
+        elif wybranyAlgorytm == 3:
+            aStar(zadanie, startPos)
+        else:
+            print("Wpisano niepoprawny numer algorytmu, proszę spróbować ponownie")
+            main()
+
 def getIndexForColumnAndRow(column, row):
     result = 0
     result = countOfColumns * row + column
@@ -121,22 +140,24 @@ def neighborsAsState(puzzleList, visitedStates, direction):
             rightBlock = getIndexForColumnAndRow(column + 1, row)
             leftBlock = getIndexForColumnAndRow(column - 1, row)
             downBlock = getIndexForColumnAndRow(column, row + 1)
-            if direction == 'U':
+            if direction == 'U' and row-1 >= 0:
                 tmp = puzzleResult[index]
                 puzzleResult[index] = puzzleResult[upBlock]
                 puzzleResult[upBlock] = tmp
-            if direction == 'L':
+            elif direction == 'L' and column-1 >= 0:
                 tmp = puzzleResult[index]
                 puzzleResult[index] = puzzleResult[leftBlock]
                 puzzleResult[leftBlock] = tmp
-            if direction == 'R':
+            elif direction == 'R' and (column + 1) < countOfColumns:
                 tmp = puzzleResult[index]
                 puzzleResult[index] = puzzleResult[rightBlock]
                 puzzleResult[rightBlock] = tmp
-            if direction == 'D':
+            elif direction == 'D' and (row+1) < countOfRows:
                 tmp = puzzleResult[index]
                 puzzleResult[index] = puzzleResult[downBlock]
                 puzzleResult[downBlock] = tmp
+            else:
+                return 0
         index += 1
     return tuple(puzzleResult)
 
@@ -205,14 +226,24 @@ def bfs(start):
                 currentStates.append((potentialNeighbor, stepDirection + x))
 
 # szukanie w głąb
-def dfs():
-    print()
+def dfs(start):
+    if isGoal(start):
+        return start
+    
+    currentStates = deque()
+    visitedStates = []
+    global stepsDirections
+    global stepsForGoal
+    currentStates.append((start, stepsDirections))
+
+    while notEmpty(currentStates):
+        print()
 
 def aStar():
     print()
 
-def printResult():
-    filename = "result.txt"
+def printResult(filename):
+    filename = "results/result_" + str(filename)
     file = open(filename, "w")
     file.writelines(str(stepsForGoal))
     file.writelines(stepsDirections)
@@ -225,19 +256,7 @@ def main():
     wybranyAlgorytm = int(input("Wybrany algorytm: "))
     glebokoscAlgorytmu = int(input("Podaj głębokość algorytmu, by określić z jaką precyzją ma wyszukiwać algorytm: "))
     nazwaPliku = input("Podaj nazwę pliku w którym zapisano zadanie: ")
-
-    zadanie = readFile(nazwaPliku)
-
-    if wybranyAlgorytm == 1:
-        result = bfs(zadanie)
-        printResult()
-    elif wybranyAlgorytm == 2:
-        dfs(zadanie, startPos)
-    elif wybranyAlgorytm == 3:
-        aStar(zadanie, startPos)
-    else:
-        print("Wpisano niepoprawny numer algorytmu, proszę spróbować ponownie")
-        main()
+    executeProgramForDirectory(nazwaPliku, glebokoscAlgorytmu, wybranyAlgorytm)
 
 if __name__ == '__main__':
     print_hi('PyCharm')
