@@ -31,6 +31,31 @@ stepsForGoal = 0
 stepsDirections = ""
 directions = "LRUD"
 
+def isSolvable(zadanie):
+    zadanieCopy = zadanie.copy()
+    rowFromBottomOf0 = 0
+    isEven = countOfColumns % 2 == 0
+    if isEven:
+        indexOf0 = zadanieCopy.index(0)
+        columnAndRowOf0 = getColumnAndRowFromIndex(indexOf0)
+        rowOf0 = columnAndRowOf0[0]
+        rowFromBottomOf0 = countOfRows - rowOf0
+    zadanieCopy.remove(0)
+    inwersja = 0
+    for x in range(len(zadanieCopy)):
+        for y in range(x+1, len(zadanieCopy)):
+#            if x == zadanie[0]:
+#                break
+            if zadanieCopy[x] > zadanieCopy[y]:
+                inwersja += 1
+    if isEven:
+        if (rowFromBottomOf0 + inwersja) % 2 == 1:
+            return True
+        return False
+    if inwersja % 2 == 0:
+        return True
+    return False
+
 def listOfStringsToListOfInt(list):
     result = []
     for x in list:
@@ -78,10 +103,11 @@ def executeProgramForDirectory(directoryPath, glebokoscAlgorytmu, wybranyAlgoryt
     list = []
     for filename in path.glob("*.txt"):
         zadanie = readFile(filename)
-
-        if wybranyAlgorytm == 1:
-            result = bfs(zadanie)
-            printResult()
+        if not isSolvable(zadanie):
+            printResult(filename.name)
+        elif wybranyAlgorytm == 1:
+            result = bfs(zadanie, glebokoscAlgorytmu)
+            printResult(filename.name)
         elif wybranyAlgorytm == 2:
             dfs(zadanie)
         elif wybranyAlgorytm == 3:
@@ -200,30 +226,40 @@ def bfs(Graph, start):
     return False
 
 #TODO: implement limit of depth
-def bfs(start):
+def bfs(start, glebokoscAlgorytmu):
     if isGoal(start):
         return start
 
     # currentStates saves state in queue not a numbers
     currentStates = deque()
+    currentStatesWithoutDepthAndDirections = deque()
     visitedStates = []
     global stepsDirections
     global stepsForGoal
-    currentStates.append((start, stepsDirections))
+    glebokosc = glebokoscAlgorytmu
+    currentStates.append((start, stepsDirections, glebokosc))
+    currentStatesWithoutDepthAndDirections.append(start)
 
     while notEmpty(currentStates):
-        v, stepDirection = currentStates.popleft()
+        v, stepDirection, glebokosc = currentStates.popleft()
+        currentStatesWithoutDepthAndDirections.popleft()
         # wcześniej v nie było sprawdź czy rozumiesz
         if isGoal(v):
             stepsDirections = stepDirection
             stepsForGoal = len(stepDirection)
             return v
+        if glebokosc <= 0:
+            stepsDirections = []
+            stepsForGoal = 0
+            continue
         visitedStates.append(v)
         for x in directions:
             potentialNeighbor = neighborsAsState(v, visitedStates, x)
             # czy to nie jest 2 razy?
-            if potentialNeighbor != 0 and potentialNeighbor not in visitedStates and potentialNeighbor not in currentStates:
-                currentStates.append((potentialNeighbor, stepDirection + x))
+            if potentialNeighbor != 0 and potentialNeighbor not in visitedStates and potentialNeighbor not in currentStatesWithoutDepthAndDirections:
+                currentStates.append((potentialNeighbor, stepDirection + x, glebokosc - 1))
+                currentStatesWithoutDepthAndDirections.append(potentialNeighbor)
+        
 
 # szukanie w głąb
 def dfs(start):
@@ -243,6 +279,8 @@ def aStar():
     print()
 
 def printResult(filename):
+    dirName = "results"
+    os.makedirs(dirName, exist_ok=True)
     filename = "results/result_" + str(filename)
     file = open(filename, "w")
     file.writelines(str(stepsForGoal))
