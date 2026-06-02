@@ -106,6 +106,10 @@ def executeProgramForDirectory(directoryPath, glebokoscAlgorytmu, wybranyAlgoryt
         if not isSolvable(zadanie):
             printResult(filename.name)
         elif wybranyAlgorytm == 1:
+            global stepsDirections
+            global stepsForGoal
+            stepsDirections = ""
+            stepsForGoal = 0
             result = bfs(zadanie, glebokoscAlgorytmu)
             printResult(filename.name)
         elif wybranyAlgorytm == 2:
@@ -191,7 +195,7 @@ def isGoal(graph):
     index = 0
     for x in range(countOfColumns):
         for y in range(countOfRows):
-            if graph[index] != index:
+            if graph[index] != (index+1) % (countOfColumns * countOfRows):
                 return False
             index += 1
     return True
@@ -249,8 +253,9 @@ def bfs(start, glebokoscAlgorytmu):
             stepsForGoal = len(stepDirection)
             return v
         if glebokosc <= 0:
-            stepsDirections = []
-            stepsForGoal = 0
+            #TODO: moze to odkomentowac?
+            #stepsDirections = ""
+            #stepsForGoal = 0
             continue
         visitedStates.append(v)
         for x in directions:
@@ -259,7 +264,6 @@ def bfs(start, glebokoscAlgorytmu):
             if potentialNeighbor != 0 and potentialNeighbor not in visitedStates and potentialNeighbor not in currentStatesWithoutDepthAndDirections:
                 currentStates.append((potentialNeighbor, stepDirection + x, glebokosc - 1))
                 currentStatesWithoutDepthAndDirections.append(potentialNeighbor)
-        
 
 # szukanie w głąb
 def dfs(start):
