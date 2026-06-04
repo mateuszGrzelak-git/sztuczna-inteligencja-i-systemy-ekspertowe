@@ -113,7 +113,12 @@ def executeProgramForDirectory(directoryPath, glebokoscAlgorytmu, wybranyAlgoryt
             result = bfs(zadanie, glebokoscAlgorytmu)
             printResult(filename.name)
         elif wybranyAlgorytm == 2:
-            dfs(zadanie)
+            global stepsDirections
+            global stepsForGoal
+            stepsDirections = ""
+            stepsForGoal = 0
+            result = dfs(zadanie, glebokoscAlgorytmu)
+            printResult(filename.name)
         elif wybranyAlgorytm == 3:
             aStar(zadanie, startPos)
         else:
@@ -266,18 +271,35 @@ def bfs(start, glebokoscAlgorytmu):
                 currentStatesWithoutDepthAndDirections.append(potentialNeighbor)
 
 # szukanie w głąb
-def dfs(start):
+def dfs(start, glebokoscAlgorytmu):
     if isGoal(start):
         return start
     
     currentStates = deque()
+    currentStatesWithoutDepthAndDirections = deque()
     visitedStates = []
     global stepsDirections
     global stepsForGoal
-    currentStates.append((start, stepsDirections))
+    glebokosc = glebokoscAlgorytmu
+    currentStates.append((start, stepsDirections, glebokosc))
+    currentStatesWithoutDepthAndDirections.append(start)
 
     while notEmpty(currentStates):
-        print()
+        v, stepDirection, glebokosc = currentStates.pop()
+        currentStatesWithoutDepthAndDirections.pop()
+        if isGoal(v):
+            stepsDirections = stepDirection
+            stepsForGoal = len(stepDirection)
+            return v
+        if glebokosc <= 0:
+            continue
+        visitedStates.append(v)
+        for x in directions:
+            potentialNeighbor = neighborsAsState(v, visitedStates, x)
+            # czy to nie jest 2 razy?
+            if potentialNeighbor != 0 and potentialNeighbor not in visitedStates and potentialNeighbor not in currentStatesWithoutDepthAndDirections:
+                currentStates.append((potentialNeighbor, stepDirection + x, glebokosc - 1))
+                currentStatesWithoutDepthAndDirections.append(potentialNeighbor)
 
 def aStar():
     print()
