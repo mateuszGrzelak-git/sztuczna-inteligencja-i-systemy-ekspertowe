@@ -1,4 +1,6 @@
 from collections import deque
+from typing import Dict
+
 import matplotlib as plt
 import csv
 import numpy as np
@@ -101,20 +103,18 @@ def readFile(path):
 def executeProgramForDirectory(directoryPath, glebokoscAlgorytmu, wybranyAlgorytm):
     path = Path(os.getcwd()) / directoryPath
     list = []
+    global stepsDirections
+    global stepsForGoal
     for filename in path.glob("*.txt"):
         zadanie = readFile(filename)
         if not isSolvable(zadanie):
             printResult(filename.name)
         elif wybranyAlgorytm == 1:
-            global stepsDirections
-            global stepsForGoal
             stepsDirections = ""
             stepsForGoal = 0
             result = bfs(zadanie, glebokoscAlgorytmu)
             printResult(filename.name)
         elif wybranyAlgorytm == 2:
-            global stepsDirections
-            global stepsForGoal
             stepsDirections = ""
             stepsForGoal = 0
             result = dfs(zadanie, glebokoscAlgorytmu)
@@ -277,7 +277,7 @@ def dfs(start, glebokoscAlgorytmu):
     
     currentStates = deque()
     currentStatesWithoutDepthAndDirections = deque()
-    visitedStates = []
+    visitedStates = {}
     global stepsDirections
     global stepsForGoal
     glebokosc = glebokoscAlgorytmu
@@ -293,11 +293,15 @@ def dfs(start, glebokoscAlgorytmu):
             return v
         if glebokosc <= 0:
             continue
-        visitedStates.append(v)
+        visitedStates.update({tuple(v): glebokosc})
         for x in directions:
             potentialNeighbor = neighborsAsState(v, visitedStates, x)
             # czy to nie jest 2 razy?
-            if potentialNeighbor != 0 and potentialNeighbor not in visitedStates and potentialNeighbor not in currentStatesWithoutDepthAndDirections:
+            if potentialNeighbor != 0 and potentialNeighbor not in currentStatesWithoutDepthAndDirections:
+                if potentialNeighbor in visitedStates:
+                    if glebokosc-1 <= visitedStates.get(potentialNeighbor):
+                        continue
+                visitedStates.update({potentialNeighbor: glebokosc-1})
                 currentStates.append((potentialNeighbor, stepDirection + x, glebokosc - 1))
                 currentStatesWithoutDepthAndDirections.append(potentialNeighbor)
 
