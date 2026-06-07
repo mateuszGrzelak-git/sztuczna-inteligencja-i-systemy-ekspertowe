@@ -22,6 +22,10 @@ tylko cała plansza według teorii algorytmów
 # True == success
 # False == failure
 
+"""
+hamming - kafelki znajdujące się nie na swoich pozycjach
+manhattan - suma ruchow kafelkow ktore wymagane sa by byly na swoich pozycjach
+"""
 countOfRows = 0
 countOfColumns = 0
 
@@ -120,6 +124,12 @@ def executeProgramForDirectory(directoryPath, glebokoscAlgorytmu, wybranyAlgoryt
             result = dfs(zadanie, glebokoscAlgorytmu)
             printResult(filename.name)
         elif wybranyAlgorytm == 3:
+            stepsDirections = ""
+            stepsForGoal = 0
+            aStar(zadanie, startPos)
+        elif wybranyAlgorytm == 4:
+            stepsDirections = ""
+            stepsForGoal = 0
             aStar(zadanie, startPos)
         else:
             print("Wpisano niepoprawny numer algorytmu, proszę spróbować ponownie")
@@ -195,6 +205,34 @@ def neighborsAsState(puzzleList, visitedStates, direction):
                 return 0
         index += 1
     return tuple(puzzleResult)
+
+#manhattan - suma ruchow kafelkow ktore wymagane sa by byly na swoich pozycjach
+def manhattan(state):
+    index = 0
+    ruchyKafelkow = 0
+    for x in range(countOfColumns):
+        for y in range(countOfRows):
+            if state[index] != (index+1) % (countOfColumns * countOfRows):
+                if state[index] != 0:
+                    goalPositionOfWrongBlock = getColumnAndRowFromIndex(state[index]-1)
+                    currentPositionOfWrongBlock = getColumnAndRowFromIndex(index)
+                    columnCost = abs(currentPositionOfWrongBlock[0] - goalPositionOfWrongBlock[0])
+                    rowCost = abs(currentPositionOfWrongBlock[1] - goalPositionOfWrongBlock[1])
+                    costOfWrongBlock = columnCost + rowCost
+                    ruchyKafelkow += costOfWrongBlock
+            index += 1
+    return ruchyKafelkow
+
+def hamming(state):
+    index = 0
+    missingBlocks = 0
+    for x in range(countOfColumns):
+        for y in range(countOfRows):
+            if state[index] != (index+1) % (countOfColumns * countOfRows):
+                if state[index] != 0:
+                    missingBlocks += 1
+            index += 1
+    return missingBlocks
 
 def isGoal(graph):
     index = 0
@@ -305,8 +343,45 @@ def dfs(start, glebokoscAlgorytmu):
                 currentStates.append((potentialNeighbor, stepDirection + x, glebokosc - 1))
                 currentStatesWithoutDepthAndDirections.append(potentialNeighbor)
 
-def aStar():
-    print()
+def popPriorityQueue(queue):
+    minimalIndex = 0
+    fIndex = 0
+
+    for i in range(1, len(queue)):
+        if queue[i][fIndex] < queue[minimalIndex][fIndex]:
+            minimalIndex = i
+    result = queue[minimalIndex]
+    queue.remove(result)
+    return result
+
+def aStar(start, glebokoscAlgorytmu):
+    if isGoal(start):
+        return start
+    currentStatesWithPriority = []
+    #g to jest odwrotnosc glebokosci tzn. glebokoscAlgorytmu - glebokosc
+    glebokosc = glebokoscAlgorytmu
+    priority = 1
+    global stepsDirections
+    global stepsForGoal
+    currentStatesWithPriority.append((priority, start, 0, stepsDirections))
+    while notEmpty(currentStatesWithPriority):
+        f, v, g, stepDirection = popPriorityQueue(currentStatesWithPriority)
+        if isGoal(v):
+            stepsDirections = stepDirection
+            stepsForGoal = len(stepDirection)
+            return v
+        if glebokosc <= 0:
+            continue
+        for direction in directions:
+            neighbor = neighborsAsState(v, deque(), direction)
+            if neighbor == 0:
+                continue
+            newG = g + 1
+            #TODO: hamming or manhattan JUST DO IT!!!
+            h = hamming(neighbor)
+            f = h + newG
+            #neighbor czy jednak V???
+            currentStatesWithPriority.append((f, neighbor, newG, stepDirection + direction))
 
 def printResult(filename):
     dirName = "results"
@@ -322,6 +397,11 @@ def main():
     print("2) wyszukiwanie w głąb")
     print("3) wyszukiwanie A*")
     wybranyAlgorytm = int(input("Wybrany algorytm: "))
+    if wybranyAlgorytm == 3:
+        print("#ybierz metrykę: ")
+        print("1) metryka hamminga")
+        print("2) metryka manhattan")
+        wybranyAlgorytm = int(input("Wybrana metryka: "))+2
     glebokoscAlgorytmu = int(input("Podaj głębokość algorytmu, by określić z jaką precyzją ma wyszukiwać algorytm: "))
     nazwaPliku = input("Podaj nazwę pliku w którym zapisano zadanie: ")
     executeProgramForDirectory(nazwaPliku, glebokoscAlgorytmu, wybranyAlgorytm)
