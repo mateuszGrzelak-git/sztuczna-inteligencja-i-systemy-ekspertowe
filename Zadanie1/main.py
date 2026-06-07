@@ -126,11 +126,11 @@ def executeProgramForDirectory(directoryPath, glebokoscAlgorytmu, wybranyAlgoryt
         elif wybranyAlgorytm == 3:
             stepsDirections = ""
             stepsForGoal = 0
-            aStar(zadanie, startPos)
+            aStar(zadanie, startPos, 1)
         elif wybranyAlgorytm == 4:
             stepsDirections = ""
             stepsForGoal = 0
-            aStar(zadanie, startPos)
+            aStar(zadanie, startPos, 2)
         else:
             print("Wpisano niepoprawny numer algorytmu, proszę spróbować ponownie")
             main()
@@ -354,10 +354,11 @@ def popPriorityQueue(queue):
     queue.remove(result)
     return result
 
-def aStar(start, glebokoscAlgorytmu):
+def aStar(start, glebokoscAlgorytmu, wybor):
     if isGoal(start):
         return start
     currentStatesWithPriority = []
+    visitedStates = {}
     #g to jest odwrotnosc glebokosci tzn. glebokoscAlgorytmu - glebokosc
     glebokosc = glebokoscAlgorytmu
     priority = 1
@@ -372,13 +373,20 @@ def aStar(start, glebokoscAlgorytmu):
             return v
         if glebokosc <= 0:
             continue
+        visitedStates.update({v: g})
         for direction in directions:
             neighbor = neighborsAsState(v, deque(), direction)
             if neighbor == 0:
                 continue
+            if visitedStates.get(neighbor) != None:
+                if g+1 >= visitedStates.get(neighbor):
+                    continue
             newG = g + 1
             #TODO: hamming or manhattan JUST DO IT!!!
-            h = hamming(neighbor)
+            if wybor == 1:
+                h = hamming(neighbor)
+            elif wybor == 2:
+                h = manhattan(neighbor)
             f = h + newG
             #neighbor czy jednak V???
             currentStatesWithPriority.append((f, neighbor, newG, stepDirection + direction))
