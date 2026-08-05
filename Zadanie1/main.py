@@ -126,12 +126,12 @@ def executeProgramForDirectory(directoryPath, glebokoscAlgorytmu, wybranyAlgoryt
         elif wybranyAlgorytm == 3:
             stepsDirections = ""
             stepsForGoal = 0
-            result = aStar(zadanie, startPos, 1)
+            result = aStar(zadanie, glebokoscAlgorytmu, 1)
             printResult(filename.name)
         elif wybranyAlgorytm == 4:
             stepsDirections = ""
             stepsForGoal = 0
-            result = aStar(zadanie, startPos, 2)
+            result = aStar(zadanie, glebokoscAlgorytmu, 2)
             printResult(filename.name)
         else:
             print("Wpisano niepoprawny numer algorytmu, proszę spróbować ponownie")
@@ -357,6 +357,7 @@ def popPriorityQueue(queue):
     return result
 
 def aStar(start, glebokoscAlgorytmu, wybor):
+    start = tuple(start)
     if isGoal(start):
         return start
     currentStatesWithPriority = []
